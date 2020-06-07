@@ -1,8 +1,15 @@
 import React from "react";
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBBtn } from "mdbreact";
 import TextField from "@material-ui/core/TextField";
+import { MenuItem } from "@material-ui/core";
 
-const SearchRistoranti = () => {
+const SearchRistoranti = ({
+  regioni,
+  province,
+  onClick,
+  selectedRegione,
+  selectedProvincia,
+}) => {
   return (
     <MDBCard>
       <MDBCardBody>
@@ -13,14 +20,33 @@ const SearchRistoranti = () => {
           label="Regione"
           helperText="Seleziona la tua regione"
           style={{ marginRight: 30 }}
-        ></TextField>
+          onClick={onClick}
+          value={selectedRegione}
+          name="selectedRegione"
+        >
+          {regioni.map((option) => (
+            <MenuItem key={option.key} value={option.key}>
+              {option.value}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           id="standard-select-currency-native"
           select
           label="Provincia"
           helperText="Seleziona la tua provincia"
           style={{ marginRight: 30 }}
-        ></TextField>
+          onClick={onClick}
+          value={selectedProvincia}
+          name="selectedProvincia"
+          disabled={province.length > 0 ? false : true}
+        >
+          {province.map((option) => (
+            <MenuItem key={option.key} value={option.key}>
+              {option.value}
+            </MenuItem>
+          ))}
+        </TextField>
         <MDBBtn color="primary">Cerca</MDBBtn>
       </MDBCardBody>
     </MDBCard>
