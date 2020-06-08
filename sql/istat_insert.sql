@@ -1,4 +1,3 @@
-USE foodyrest;
 
 -- regioni
 INSERT INTO regione VALUES(1, "Piemonte");

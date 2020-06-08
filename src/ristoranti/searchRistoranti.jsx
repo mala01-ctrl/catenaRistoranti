@@ -9,6 +9,7 @@ const SearchRistoranti = ({
   onClick,
   selectedRegione,
   selectedProvincia,
+  onSearch,
 }) => {
   return (
     <MDBCard>
@@ -47,7 +48,9 @@ const SearchRistoranti = ({
             </MenuItem>
           ))}
         </TextField>
-        <MDBBtn color="primary">Cerca</MDBBtn>
+        <MDBBtn color="primary" onClick={onSearch}>
+          Cerca
+        </MDBBtn>
       </MDBCardBody>
     </MDBCard>
   );

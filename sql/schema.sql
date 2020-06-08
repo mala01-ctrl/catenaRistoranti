@@ -26,7 +26,7 @@ CREATE TABLE indirizzo (
     id_indirizzo INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
     via VARCHAR(255) NOT NULL,
     num_civico INT NOT NULL,
-    cap INT NOT NULL,
+    cap VARCHAR(10) NOT NULL,
     residenza TINYINT(1) NOT NULL,
     idComune INT NOT NULL,
     FOREIGN KEY (idComune) REFERENCES comune(id_comune)
@@ -66,6 +66,9 @@ CREATE TABLE cliente_indirizzo (
 CREATE TABLE feedback (
     id_feedback INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     commento VARCHAR(255),
+    titolo varchar(50) NOT NULL,
+    dataCreazione DATE NOT NULL,
+    dataVisita DATE NOT NULL,
     numeroStelle INT NOT NULL,
     num_like INT,
     idCliente INT NOT NULL,
@@ -84,19 +87,33 @@ CREATE TABLE ordinazioni (
     FOREIGN KEY (idCliente) REFERENCES cliente(id_cliente)
 );
 
-CREATE TABLE pasto (
-    id_pasto INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(50) NOT NULL,
-    descrizione VARCHAR(255),
-    tipo VARCHAR(50)
+CREATE TABLE tipo_prodotto(
+    id_tipoProdotto INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50)
 );
 
-CREATE TABLE ordinazione_pasto (
+CREATE TABLE prodotto (
+    id_prodotto INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    descrizione VARCHAR(255),
+    idTipoProdotto INT NOT NULL,
+    FOREIGN KEY (idTipoProdotto) REFERENCES tipo_prodotto(id_tipoProdotto)
+);
+
+CREATE TABLE ordinazione_prodotto(
     id_ordinazione INT NOT NULL,
-    id_pasto INT NOT NULL,
-    PRIMARY KEY (id_ordinazione, id_pasto),
+    id_prodotto INT NOT NULL,
+    PRIMARY KEY (id_ordinazione, id_prodotto),
     FOREIGN KEY (id_ordinazione) REFERENCES ordinazioni(id_ordinazione),
-    FOREIGN KEY (id_pasto) REFERENCES pasto(id_pasto)
+    FOREIGN KEY (id_prodotto) REFERENCES prodotto(id_prodotto)
+);
+
+CREATE TABLE prodotto_ristorante(
+    id_prodotto INT NOT NULL,
+    id_ristorante INT NOT NULL,
+    PRIMARY KEY (id_prodotto, id_ristorante),
+    FOREIGN KEY (id_prodotto) REFERENCES prodotto(id_prodotto),
+    FOREIGN KEY (id_ristorante) REFERENCES ristoranti(id_ristorante)
 );
 
 
