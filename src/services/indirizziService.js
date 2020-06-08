@@ -18,3 +18,11 @@ export async function getProvince() {
   });
   return province;
 }
+
+export async function getComuni() {
+  const { data } = await http.get(config.apiEndpoint + param + "/comune");
+  const comuni = data.map((c) => {
+    return { value: c.nome, key: c.id_comune, idProvincia: c.idProvincia };
+  });
+  return comuni;
+}

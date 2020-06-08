@@ -1,6 +1,7 @@
 <?php
 require("../models/Indirizzi/Regione.php");
 require("../models/Indirizzi/Provincia.php");
+require("../models/Indirizzi/Comune.php");
 
 @header('Content-Type: application/json');
 @header('Access-Control-Allow-Origin: http://localhost:3000');
@@ -15,5 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else if ($param === "provincia") {
         $p = new Provincia();
         $p->getProvince();
+    } else if ($param === "comune") {
+        $c = new Comune();
+        $c->getComuni();
     }
 }

@@ -47,14 +47,16 @@ class Navbar extends Component {
                 </MDBBtn>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBBtn
-                  color="transparent"
-                  className="navbar-button"
-                  style={{ color: "white" }}
-                >
-                  <MDBIcon className="mr-2" icon="user-plus" fixed />
-                  Registrati
-                </MDBBtn>
+                <NavLink to="/registrazione">
+                  <MDBBtn
+                    color="transparent"
+                    className="navbar-button"
+                    style={{ color: "white" }}
+                  >
+                    <MDBIcon className="mr-2" icon="user-plus" fixed />
+                    Registrati
+                  </MDBBtn>
+                </NavLink>
               </MDBNavItem>
             </MDBNavbarNav>
           </MDBCollapse>

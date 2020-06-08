@@ -16,7 +16,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-star-ratings": "^2.3.0",
-    "react-toastify": "^6.0.5"
+    "react-toastify": "^6.0.5",
+    "validate.js": "^0.13.1"
   },
   "scripts": {
     "start": "react-scripts start",
