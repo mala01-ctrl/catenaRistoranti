@@ -18,18 +18,20 @@ import {
   getComuni,
 } from "../services/indirizziService";
 import RegisterIndirizziCustomer from "./registerIndirizziCustomer";
+import { register } from "../services/registerCustomer";
+import { loginWithJwt } from "../services/authService";
 
 class Register extends Component {
   state = {
     activeStep: 0,
     data: {
-      nome: "M",
-      cognome: "M",
-      email: "mala@gmail.com",
-      cellulare: "3317441472",
+      nome: "",
+      cognome: "",
+      email: "",
+      cellulare: "",
       id_comune: "",
-      username: "mala01-ctrl",
-      password: "Lorimala01",
+      username: "",
+      password: "",
       via: "",
       cap: "",
       num_civico: "",
@@ -219,7 +221,7 @@ class Register extends Component {
     this.setState({ activeStep: 0 });
   };
 
-  doSubmit = (e) => {
+  doSubmit = async (e) => {
     e.preventDefault();
     const errors = this.validate();
     if (errors) {
@@ -227,7 +229,12 @@ class Register extends Component {
       return;
     }
     try {
-      console.log("submit");
+      const { data } = this.state;
+      const { data: jwt } = await register(data);
+      if (typeof jwt === "string") {
+        loginWithJwt(jwt);
+        window.location = "/home";
+      } else return;
     } catch (ex) {}
   };
 

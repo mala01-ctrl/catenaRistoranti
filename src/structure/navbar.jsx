@@ -10,11 +10,27 @@ import {
   MDBIcon,
 } from "mdbreact";
 import { NavLink } from "react-router-dom";
+import { getCurrentCustomer, logout } from "../services/authService";
 
 class Navbar extends Component {
-  state = {};
+  state = {
+    customer: {},
+  };
+
+  componentDidMount() {
+    try {
+      const { data: customer } = getCurrentCustomer();
+      if (customer) this.setState({ customer });
+    } catch (ex) {}
+  }
+
+  handleLogout = () => {
+    logout();
+    window.location = "/home";
+  };
 
   render() {
+    const { customer } = this.state;
     return (
       <header>
         <MDBNavbar color="elegant-color-dark" dark expand="md">
@@ -36,28 +52,59 @@ class Navbar extends Component {
                   </MDBBtn>
                 </NavLink>
               </MDBNavItem>
-              <MDBNavItem>
-                <MDBBtn
-                  color="transparent"
-                  className="navbar-button"
-                  style={{ color: "white" }}
-                >
-                  <MDBIcon className="mr-2" icon="sign-in-alt" fixed />
-                  Login
-                </MDBBtn>
-              </MDBNavItem>
-              <MDBNavItem>
-                <NavLink to="/registrazione">
-                  <MDBBtn
-                    color="transparent"
-                    className="navbar-button"
-                    style={{ color: "white" }}
-                  >
-                    <MDBIcon className="mr-2" icon="user-plus" fixed />
-                    Registrati
-                  </MDBBtn>
-                </NavLink>
-              </MDBNavItem>
+              {!customer.username && (
+                <React.Fragment>
+                  <MDBNavItem>
+                    <MDBBtn
+                      color="transparent"
+                      className="navbar-button"
+                      style={{ color: "white" }}
+                    >
+                      <MDBIcon className="mr-2" icon="sign-in-alt" fixed />
+                      Login
+                    </MDBBtn>
+                  </MDBNavItem>
+                  <MDBNavItem>
+                    <NavLink to="/registrazione">
+                      <MDBBtn
+                        color="transparent"
+                        className="navbar-button"
+                        style={{ color: "white" }}
+                      >
+                        <MDBIcon className="mr-2" icon="user-plus" fixed />
+                        Registrati
+                      </MDBBtn>
+                    </NavLink>
+                  </MDBNavItem>
+                </React.Fragment>
+              )}
+              {customer.username && (
+                <React.Fragment>
+                  <MDBNavItem>
+                    <MDBBtn
+                      color="transparent"
+                      className="navbar-button"
+                      style={{ color: "white" }}
+                      onClick={this.handleLogout}
+                    >
+                      <MDBIcon className="mr-2" icon="sign-out-alt" fixed />
+                      Logout
+                    </MDBBtn>
+                  </MDBNavItem>
+                  <MDBNavItem>
+                    <NavLink to="/registrazione">
+                      <MDBBtn
+                        color="transparent"
+                        className="navbar-button"
+                        style={{ color: "white" }}
+                      >
+                        <MDBIcon className="mr-2" icon="user-alt" fixed />
+                        {customer.username}
+                      </MDBBtn>
+                    </NavLink>
+                  </MDBNavItem>
+                </React.Fragment>
+              )}
             </MDBNavbarNav>
           </MDBCollapse>
         </MDBNavbar>
