@@ -26,7 +26,7 @@ class Navbar extends Component {
 
   handleLogout = () => {
     logout();
-    window.location = "/home";
+    window.location = "/";
   };
 
   render() {
@@ -55,14 +55,16 @@ class Navbar extends Component {
               {!customer.username && (
                 <React.Fragment>
                   <MDBNavItem>
-                    <MDBBtn
-                      color="transparent"
-                      className="navbar-button"
-                      style={{ color: "white" }}
-                    >
-                      <MDBIcon className="mr-2" icon="sign-in-alt" fixed />
-                      Login
-                    </MDBBtn>
+                    <NavLink to="/login">
+                      <MDBBtn
+                        color="transparent"
+                        className="navbar-button"
+                        style={{ color: "white" }}
+                      >
+                        <MDBIcon className="mr-2" icon="sign-in-alt" fixed />
+                        Login
+                      </MDBBtn>
+                    </NavLink>
                   </MDBNavItem>
                   <MDBNavItem>
                     <NavLink to="/registrazione">

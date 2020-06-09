@@ -2,7 +2,7 @@
 
 use Firebase\JWT\JWT;
 
-function createJWT($username, $_codPersona, $userType)
+function createJWT($username, $id_cliente, $userType)
 {
     $jwtSettings = file_get_contents(__DIR__ . '/../credentials/jwt-settings.json');
     if ($jwtSettings === false) {
@@ -21,7 +21,7 @@ function createJWT($username, $_codPersona, $userType)
         "exp" => $expireClaim,
         "data" => array(
             "username" => $username,
-            "_codPersona" => $_codPersona,
+            "id_cliente" => $id_cliente,
             "userType" => $userType
         )
     );

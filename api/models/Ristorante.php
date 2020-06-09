@@ -16,7 +16,7 @@ class Ristorante
     public function getRistoranti()
     {
         try {
-            $sql = "SELECT r.nome, p.nome as provincia, i.via, i.num_civico, 
+            $sql = "SELECT r.id_ristorante, r.nome, p.nome as provincia, i.via, i.num_civico, 
             p.id_provincia, r.id_ristorante
             FROM ristoranti r 
             INNER JOIN indirizzo i on i.id_indirizzo = r.idIndirizzo

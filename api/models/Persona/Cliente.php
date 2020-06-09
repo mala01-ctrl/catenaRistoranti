@@ -50,4 +50,23 @@ class Cliente extends Persona
             echo json_encode($e->getMessage());
         }
     }
+
+    public function login()
+    {
+        try {
+            $sql = "SELECT p.username, c.password, p.id_persona FROM cliente c 
+            INNER JOIN persona p on p.id_persona = c.id_cliente
+            WHERE p.username = :username";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue('username', $this->username);
+            $stmt->execute();
+            $cliente = $stmt->fetchObject();
+            $this->id_persona = $cliente->id_persona;
+            if (password_verify($this->password, $cliente->password))
+                return true;
+            return false;
+        } catch (PDOException $e) {
+            echo json_encode($e->getMessage());
+        }
+    }
 }

@@ -11,7 +11,15 @@ import StarRatings from "react-star-ratings";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 
-const ModalFeedBack = ({ open, onToggle, starsSelected, onRating }) => {
+const ModalFeedBack = ({
+  open,
+  onToggle,
+  starsSelected,
+  onRating,
+  onChangeText,
+  errors,
+  onSubmit,
+}) => {
   const useStyles = makeStyles((theme) => ({
     container: {
       display: "flex",
@@ -41,15 +49,39 @@ const ModalFeedBack = ({ open, onToggle, starsSelected, onRating }) => {
               starDimension="30px"
               starSpacing="10px"
             />
+            {errors["numeroStelle"] ? (
+              <p style={{ color: "red" }}>{errors["numeroStelle"]}</p>
+            ) : (
+              <p></p>
+            )}
           </div>
-          <MDBInput type="textarea" label="Titolo" rows="1" />
-          <MDBInput type="textarea" label="La tua recensione" rows="5" />
+          <MDBInput
+            type="textarea"
+            label="Titolo"
+            rows="1"
+            name="titolo"
+            onChange={onChangeText}
+          />
+          {errors["titolo"] ? (
+            <p style={{ color: "red" }}>{errors["titolo"]}</p>
+          ) : (
+            <p></p>
+          )}
+          <MDBInput
+            type="textarea"
+            label="La tua recensione"
+            rows="5"
+            name="commento"
+            onChange={onChangeText}
+          />
           <div>
             <TextField
-              id="date"
               label="Data dell'esperienza"
               type="date"
+              name="dataVisita"
               defaultValue={newDate}
+              error={errors["dataVisita"]}
+              onChange={onChangeText}
               className={classes.textField}
               InputLabelProps={{
                 shrink: true,
@@ -57,7 +89,7 @@ const ModalFeedBack = ({ open, onToggle, starsSelected, onRating }) => {
             />
           </div>
           <div style={{ textAlign: "center" }}>
-            <MDBBtn>Conferma</MDBBtn>
+            <MDBBtn onClick={onSubmit}>Conferma</MDBBtn>
             <MDBBtn onClick={onToggle}>Annulla</MDBBtn>
           </div>
         </MDBCardBody>

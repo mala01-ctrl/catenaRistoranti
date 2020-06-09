@@ -1,9 +1,12 @@
-/*import http from "../services/httpService";
+import http from "../services/httpService";
 import config from "../config.json";
-
-const param = "/login.php";*/
-
 import JwtDecode from "jwt-decode";
+
+const param = "/login.php";
+
+export function login(data) {
+  return http.post(config.apiEndpoint + param, data);
+}
 
 export function loginWithJwt(jwt) {
   localStorage.setItem("token", jwt);

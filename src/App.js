@@ -7,6 +7,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import MainRistoranti from "./ristoranti/mainRistoranti";
 import Ristorante from "./ristoranti/ristorante";
 import Register from "./cliente/register";
+import LoginCustomer from "./cliente/loginCustomer";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/ristoranti/:id" component={Ristorante} />
         <Route path="/ristoranti" component={MainRistoranti} />
         <Route path="/registrazione" component={Register} />
+        <Route path="/login" component={LoginCustomer} />
         <Redirect from="/" exact to="/home" />
       </Switch>
       <Footer />
