@@ -1,30 +1,40 @@
 <?php
 require("../models/Feedback.php");
 
-use Firebase\JWT;
+use Firebase\JWT\JWT;
+
+require "../vendor/autoload.php";
 
 
-@header('Content-Type: application/json');
-@header('Access-Control-Allow-Origin: *');
-@header("Access-Control-Allow-Headers: *");
-@header("Access-Control-Allow-Methods: POST, OPTIONS");
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTION')
-    return;
 $data = json_decode(file_get_contents("php://input"));
-if (!isset($data)) {
-    exit;
-}
+
+$pathArray = explode('/', $_SERVER['REQUEST_URI']);
+$param = $pathArray[4];
+if (isset($pathArray[5]))
+    $id = $pathArray[5];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $feedback = new Feedback();
     createFeedback($feedback, $data);
-    if ($feedback->addFeedback())
-        echo json_encode(array('status' => TRUE, 'message' => "FeedBack inserito"), true);
+    $feedback->addFeedback();
+    if ($feedback->id_feedback)
+        echo json_encode(array('status' => TRUE, 'id' => $feedback->id_feedback), true);
     else
-        echo json_encode(array('status' => FALSE, 'message' => "FeedBack non inserito"), true);
-} else
-    http_response_code(400);
+        echo json_encode(array('status' => FALSE, 'message' => "Feedback non inserito"), true);
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if ($param === "ristorante" && isset($id)) {
+        getFeedbackClient($id);
+    }
+    if ($param === "feedback" && isset($id)) {
+        $feedback = new Feedback();
+        $feedback->idRistorante = $id;
+        $feedback->getAllFeedbackById();
+    }
+}
 
 function createFeedback($feedback, $data)
 {
@@ -34,4 +44,34 @@ function createFeedback($feedback, $data)
     $feedback->idRistorante = $data->idRistorante;
     $feedback->dataVisita = $data->dataVisita;
     $feedback->titolo = $data->titolo;
+}
+
+function getFeedbackClient($id)
+{
+    $headers = apache_request_headers();
+    $jwtSettings = file_get_contents(__DIR__ . '/../credentials/jwt-settings.json');
+    $jwtSettings = json_decode($jwtSettings);
+
+    if (isset($headers['Authorization'])) {
+        $authHeader = $headers['Authorization'];
+        $arr = explode(" ", $authHeader);
+        $jwt = $arr[1];
+        if ($jwt) {
+            try {
+                $decoded = JWT::decode($jwt, $jwtSettings->secretKey, array('HS256'));
+                $feedback = new Feedback();
+                $feedback->idCliente = $decoded->data->id_cliente;
+                $feedback->idRistorante = $id;
+                $feedback->getFeedbackByIdClient();
+            } catch (Exception $e) {
+                http_response_code(401);
+                echo json_encode(array(
+                    "message" => "Access denied.",
+                    "error" => $e->getMessage()
+                ));
+            }
+        }
+    } else {
+        header("HTTP/1.1 400 Bad Request");
+    }
 }

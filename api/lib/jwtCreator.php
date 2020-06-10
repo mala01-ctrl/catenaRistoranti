@@ -11,7 +11,7 @@ function createJWT($username, $id_cliente, $userType)
     $jwtSettings = json_decode($jwtSettings);
     $tokenId = base64_encode(random_bytes(32));
     $issuedatClaim = time();
-    $notbeforeClaim = intval($issuedatClaim + 10);
+    $notbeforeClaim = intval($issuedatClaim);
     $expireClaim = intval($issuedatClaim + 14400); // SCADENZA IN SECONDI 24 ore
     $token = array(
         "iss" => $jwtSettings->issuer_claim,

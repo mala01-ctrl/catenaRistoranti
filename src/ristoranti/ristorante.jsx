@@ -5,12 +5,18 @@ import { getRistoranteIndirizzoById } from "../services/ristorantiService";
 import ModalFeedBack from "./modalFeedback";
 import { getCurrentCustomer } from "../services/authService";
 import validate from "validate.js";
-import { createFeedback } from "../services/feedbackService";
+import {
+  createFeedback,
+  getFeedbackClient,
+  getAllFeedBackById,
+} from "../services/feedbackService";
+import Feedback from "./feedback";
 
 class Ristorante extends Component {
   state = {
     ristorante: {},
     feedback: {
+      id_feedback: 0,
       commento: "",
       numeroStelle: 0,
       idCliente: "",
@@ -18,7 +24,9 @@ class Ristorante extends Component {
       dataVisita: "",
       titolo: "",
     },
+    allFeedback: [],
     errors: {},
+    username: "",
     open: false,
     rating: 0,
   };
@@ -40,13 +48,29 @@ class Ristorante extends Component {
       const id = this.props.match.params.id;
       const { data: ristorante } = await getRistoranteIndirizzoById(id);
       this.setState({ ristorante });
-      const { data: customer } = getCurrentCustomer();
-      const { feedback } = this.state;
-      feedback.idCliente = customer.id_cliente;
-      feedback.idRistorante = this.props.match.params.id;
-      this.setState({ feedback });
+      const { data: allFeedback } = await getAllFeedBackById(id);
+      this.setState({ allFeedback });
+      const { data: feedback } = await getFeedbackClient(id);
+      const { data: customer } = await getCurrentCustomer();
+      this.setState({ username: customer.username });
+      if (feedback) this.setState({ feedback });
+      if (feedback.id_feedback) this.filterAllFeedback();
+      else {
+        const { data: customer } = await getCurrentCustomer();
+        console.log(customer);
+        const { feedback } = this.state;
+        feedback.idCliente = customer.id_cliente;
+        feedback.idRistorante = this.props.match.params.id;
+        this.setState({ feedback, username: customer.username });
+      }
     } catch (ex) {}
   }
+
+  filterAllFeedback = () => {
+    const { allFeedback, username } = this.state;
+    const filtered = allFeedback.filter((f) => f.username !== username);
+    this.setState({ allFeedback: filtered });
+  };
 
   handleToggle = () => {
     const { open } = this.state;
@@ -88,7 +112,7 @@ class Ristorante extends Component {
     return errors;
   };
 
-  doSubmit = (e) => {
+  doSubmit = async (e) => {
     e.preventDefault();
     const errors = this.validate();
     if (errors) {
@@ -96,15 +120,23 @@ class Ristorante extends Component {
       return;
     }
     try {
-      const { data } = createFeedback(this.state.feedback);
-      console.log(data);
+      const { data: message } = await createFeedback(this.state.feedback);
+      const { feedback } = this.state;
+      feedback.id_feedback = message.id;
       const { open } = this.state;
-      this.setState({ open: !open });
+      this.setState({ open: !open, feedback });
     } catch (ex) {}
   };
 
   render() {
-    const { ristorante, open, feedback, errors } = this.state;
+    const {
+      ristorante,
+      open,
+      feedback,
+      errors,
+      allFeedback,
+      username,
+    } = this.state;
     return (
       <MDBContainer className="container">
         <MDBRow left style={{ height: "30%" }} className="align-items-center">
@@ -112,22 +144,60 @@ class Ristorante extends Component {
             <PanelRistorante
               ristorante={ristorante}
               onToggle={this.handleToggle}
+              feedback={feedback.id_feedback}
             />
+          </MDBCol>
+          <MDBCol
+            center
+            style={{ height: "30%" }}
+            className="align-items-center"
+          >
+            {feedback.id_feedback > 0 ? (
+              <Feedback
+                titolo={feedback.titolo}
+                numeroStelle={feedback.numeroStelle}
+                commento={feedback.commento}
+                dataVisita={feedback.dataVisita}
+                username={username}
+              />
+            ) : (
+              <p></p>
+            )}
           </MDBCol>
         </MDBRow>
         <MDBRow>
-          <MDBCol className="col-md-6 d-flex justify-content-center">
-            <ModalFeedBack
-              open={open}
-              onToggle={this.handleToggle}
-              starsSelected={feedback.numeroStelle}
-              onRating={this.handleChangeRating}
-              onChangeText={this.handleChangeText}
-              errors={errors}
-              onSubmit={this.doSubmit}
-            />
+          <MDBCol
+            center
+            style={{ height: "30%" }}
+            className="align-items-center"
+          >
+            {allFeedback.length > 0 ? (
+              <div>
+                <h3>Numero totale di feedback: ({allFeedback.length})</h3>
+                {allFeedback.map((f) => (
+                  <Feedback
+                    titolo={f.titolo}
+                    numeroStelle={f.numeroStelle}
+                    commento={f.commento}
+                    dataVisita={f.dataVisita}
+                    username={f.username}
+                  />
+                ))}
+              </div>
+            ) : (
+              <h3>Non ci sono ancora feedback</h3>
+            )}
           </MDBCol>
         </MDBRow>
+        <ModalFeedBack
+          open={open}
+          onToggle={this.handleToggle}
+          starsSelected={feedback.numeroStelle}
+          onRating={this.handleChangeRating}
+          onChangeText={this.handleChangeText}
+          errors={errors}
+          onSubmit={this.doSubmit}
+        />
       </MDBContainer>
     );
   }
