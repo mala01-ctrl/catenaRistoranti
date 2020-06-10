@@ -25,6 +25,7 @@ class Ristorante extends Component {
       titolo: "",
     },
     allFeedback: [],
+    filteredFeedback: [],
     errors: {},
     username: "",
     open: false,
@@ -49,27 +50,29 @@ class Ristorante extends Component {
       const { data: ristorante } = await getRistoranteIndirizzoById(id);
       this.setState({ ristorante });
       const { data: allFeedback } = await getAllFeedBackById(id);
-      this.setState({ allFeedback });
-      const { data: feedback } = await getFeedbackClient(id);
-      const { data: customer } = await getCurrentCustomer();
-      this.setState({ username: customer.username });
-      if (feedback) this.setState({ feedback });
-      if (feedback.id_feedback) this.filterAllFeedback();
-      else {
-        const { data: customer } = await getCurrentCustomer();
-        console.log(customer);
-        const { feedback } = this.state;
-        feedback.idCliente = customer.id_cliente;
-        feedback.idRistorante = this.props.match.params.id;
-        this.setState({ feedback, username: customer.username });
-      }
+      this.setState({ allFeedback, filteredFeedback: allFeedback });
+      this.renderFeedback(id);
     } catch (ex) {}
   }
 
+  renderFeedback = async (id) => {
+    const { data: feedback } = await getFeedbackClient(id);
+    const { data: customer } = await getCurrentCustomer();
+    this.setState({ username: customer.username });
+    if (feedback) this.setState({ feedback });
+    if (feedback.id_feedback > 0) this.filterAllFeedback();
+    else {
+      const { feedback } = this.state;
+      feedback.idCliente = customer.id_cliente;
+      feedback.idRistorante = this.props.match.params.id;
+      this.setState({ feedback, username: customer.username });
+    }
+  };
+
   filterAllFeedback = () => {
     const { allFeedback, username } = this.state;
-    const filtered = allFeedback.filter((f) => f.username !== username);
-    this.setState({ allFeedback: filtered });
+    const filteredFeedback = allFeedback.filter((f) => f.username !== username);
+    this.setState({ filteredFeedback });
   };
 
   handleToggle = () => {
@@ -136,6 +139,7 @@ class Ristorante extends Component {
       errors,
       allFeedback,
       username,
+      filteredFeedback,
     } = this.state;
     return (
       <MDBContainer className="container">
@@ -174,7 +178,7 @@ class Ristorante extends Component {
             {allFeedback.length > 0 ? (
               <div>
                 <h3>Numero totale di feedback: ({allFeedback.length})</h3>
-                {allFeedback.map((f) => (
+                {filteredFeedback.map((f) => (
                   <Feedback
                     titolo={f.titolo}
                     numeroStelle={f.numeroStelle}
@@ -197,6 +201,7 @@ class Ristorante extends Component {
           onChangeText={this.handleChangeText}
           errors={errors}
           onSubmit={this.doSubmit}
+          username={username}
         />
       </MDBContainer>
     );

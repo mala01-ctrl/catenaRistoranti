@@ -48,7 +48,11 @@ const SearchRistoranti = ({
             </MenuItem>
           ))}
         </TextField>
-        <MDBBtn color="primary" onClick={onSearch}>
+        <MDBBtn
+          color="primary"
+          onClick={onSearch}
+          disabled={selectedProvincia ? false : true}
+        >
           Cerca
         </MDBBtn>
       </MDBCardBody>

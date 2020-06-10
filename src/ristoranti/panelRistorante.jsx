@@ -1,7 +1,7 @@
 import React from "react";
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBBtn } from "mdbreact";
 
-const PanelRistorante = ({ ristorante, onToggle, feedback }) => {
+const PanelRistorante = ({ ristorante, onToggle, feedback, username }) => {
   console.log(feedback);
   return (
     <MDBCard>
@@ -19,7 +19,7 @@ const PanelRistorante = ({ ristorante, onToggle, feedback }) => {
           {ristorante.provincia}
         </MDBCardTitle>
         <MDBBtn>Visualizza menu</MDBBtn>
-        {feedback === 0 ? (
+        {feedback === 0 && username ? (
           <MDBBtn onClick={onToggle}>Lascia un feedback</MDBBtn>
         ) : (
           <p></p>
