@@ -19,7 +19,7 @@ const PanelRistorante = ({ ristorante, onToggle, feedback, username }) => {
           {ristorante.provincia}
         </MDBCardTitle>
         <MDBBtn>Visualizza menu</MDBBtn>
-        {feedback === 0 && username ? (
+        {username !== "" && feedback === 0 ? (
           <MDBBtn onClick={onToggle}>Lascia un feedback</MDBBtn>
         ) : (
           <p></p>

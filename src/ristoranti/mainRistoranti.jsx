@@ -4,6 +4,7 @@ import SearchRistoranti from "./searchRistoranti";
 import { getRegioni, getProvince } from "../services/indirizziService";
 import TableRistoranti from "./tableRistoranti";
 import { getRistoranti } from "../services/ristorantiService";
+import { paginate } from "../utils/paginate";
 
 class MainRistoranti extends Component {
   state = {
@@ -14,6 +15,8 @@ class MainRistoranti extends Component {
     filteredProvince: [],
     ristoranti: [],
     filterRistoranti: [],
+    currentPage: 0,
+    pageSize: 4,
   };
 
   async componentDidMount() {
@@ -34,6 +37,12 @@ class MainRistoranti extends Component {
     this.setState({ [input.name]: input.value }, this.filterProvince);
   };
 
+  handleChangeRowsPerPage = (event) => {
+    const pageSize = parseInt(event.target.value, 10);
+    this.setState({ pageSize });
+    this.setState({ currentPage: 0 });
+  };
+
   /**
    * Filtra le province in base alla regione selezionata
    */
@@ -43,6 +52,10 @@ class MainRistoranti extends Component {
       (p) => p.idRegione === selectedRegione
     );
     this.setState({ filteredProvince });
+  };
+
+  handlePageChange = (event, newPage) => {
+    this.setState({ currentPage: newPage });
   };
 
   handleSearch = () => {
@@ -60,7 +73,15 @@ class MainRistoranti extends Component {
       selectedProvincia,
       filteredProvince,
       filterRistoranti,
+      currentPage,
+      pageSize,
     } = this.state;
+    const paginateRistoranti = paginate(
+      filterRistoranti,
+      currentPage,
+      pageSize
+    );
+    const totalItems = filterRistoranti.length;
     return (
       <MDBContainer className="container">
         <MDBRow center style={{ height: "30%" }} className="align-items-center">
@@ -76,7 +97,14 @@ class MainRistoranti extends Component {
           </MDBCol>
         </MDBRow>
         <MDBRow center style={{ height: "70%" }} className="align-items-center">
-          <TableRistoranti rows={filterRistoranti} />
+          <TableRistoranti
+            rows={paginateRistoranti}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            itemsCount={totalItems}
+            onPageChange={this.handlePageChange}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
         </MDBRow>
       </MDBContainer>
     );
