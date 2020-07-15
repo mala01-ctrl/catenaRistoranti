@@ -116,5 +116,19 @@ CREATE TABLE prodotto_ristorante(
     FOREIGN KEY (id_ristorante) REFERENCES ristoranti(id_ristorante)
 );
 
+CREATE TABLE unitalavorativa(
+    id_unita INT NOT NULL PRIMARY KEY,
+    nome varchar(50)
+);
+
+CREATE TABLE dipendenti(
+    id_dipendente INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cellulare varchar(50),
+    password varchar(255),
+    idUnita INT NOT NULL,
+    FOREIGN KEY (idUnita) REFERENCES unitalavorativa(id_unita),
+    FOREIGN KEY (id_dipendente) REFERENCES persona(id_persona) 
+);
+
 
 
